@@ -126,13 +126,14 @@ function modificarPelicula($pdo, $fila, $id)
 }
 
 
-function comprobarParametros($par)
+function comprobarParametros($par, $var)
 {
-    if (empty($_POST)) {
+    if (empty($var)) {
         throw new EmptyParamException();
     }
-    if (!empty(array_diff_key($par, $_POST)) ||
-        !empty(array_diff_key($_POST, $par))) {
+    if (!empty(array_diff_key($par, $var)) ||
+        !empty(array_diff_key($var, $par))) {
+        $_SESSION['error'] = 'Está usando de manera indebida el programa';
         throw new ParamException();
     }
 }
@@ -226,6 +227,7 @@ function comprobarId($metodo)
 {
     $id = filter_input($metodo, 'id', FILTER_VALIDATE_INT);
     if ($id === null || $id === false) {
+        $_SESSION['error'] = 'Está usando de manera indebida el programa';
         throw new ValidationException();
     }
     return $id;
@@ -371,4 +373,42 @@ function tienePoderes($ambito, $tabla) {
         $_SESSION['error'] = "Debe ser administrador para poder ${ambito} ${tabla}";
         throw new PermissionException();
     }
+}
+
+function pintarTabla($par, $st)
+{
+    $cabecera = array_keys($par);
+    ?>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <?php foreach ($cabecera as $titulo): ?>
+                        <th><?= $titulo ?></th>
+                    <?php endforeach; ?>
+                    <th>Acciones</th>
+                </thead>
+                <tbody>
+                    <?php foreach ($st as $fila): ?>
+                        <tr>
+                            <?php foreach ($par as $value): ?>
+                                <td><?= h($fila[$value]) ?></td>
+                            <?php endforeach; ?>
+                            <td>
+                                <a href="confirm_borrado.php?id=<?= $fila['id'] ?>"
+                                    class="btn btn-xs btn-danger">
+                                    Borrar
+                                </a>
+                                <a href="modificar.php?id=<?= $fila['id'] ?>"
+                                    class="btn btn-xs btn-info">
+                                    Modificar
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php
 }

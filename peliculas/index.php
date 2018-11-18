@@ -12,6 +12,14 @@
     <?php
     require '../comunes/auxiliar.php';
 
+    const PAR_TABLA = [
+        'Título' => 'titulo',
+        'Año' => 'anyo',
+        'Sinopsis' => 'sinopsis',
+        'Duración' => 'duracion',
+        'Genero' => 'genero',
+    ];
+
     cabecera();
     aceptaCookies();
     pie();
@@ -22,6 +30,7 @@
             <?php
             $pdo = conectar();
             try {
+                comprobarParametros(['id' => ''], $_POST);
                 $id = comprobarId(INPUT_POST);
                 comprobarPelicula($pdo, $id);
                 $pdo->beginTransaction();
@@ -30,9 +39,9 @@
                 $st->execute([':id' => $id]);
                 $_SESSION['mensaje'] = 'Película eliminada correctamente.';
                 $pdo->commit();
-            } catch (PermissionException $e) {
+            } catch (PermissionException|ParamException|ValidationException $e) {
                 header('Location: index.php');
-            } catch (ParamException $e) {
+            } catch (EmptyParamException $e) {
                 // No hago nada
             }
             mensaje();
@@ -63,41 +72,7 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-bordered table-hover table-striped">
-                        <thead>
-                            <th>Título</th>
-                            <th>Año</th>
-                            <th>Sinopsis</th>
-                            <th>Duración</th>
-                            <th>Género</th>
-                            <th>Acciones</th>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($st as $fila): ?>
-                                <tr>
-                                    <td><?= h($fila['titulo']) ?></td>
-                                    <td><?= h($fila['anyo']) ?></td>
-                                    <td><?= h($fila['sinopsis']) ?></td>
-                                    <td><?= h($fila['duracion']) ?></td>
-                                    <td><?= h($fila['genero']) ?></td>
-                                    <td>
-                                        <a href="confirm_borrado.php?id=<?= $fila['id'] ?>"
-                                            class="btn btn-xs btn-danger">
-                                            Borrar
-                                        </a>
-                                        <a href="modificar.php?id=<?= $fila['id'] ?>"
-                                            class="btn btn-xs btn-info">
-                                            Modificar
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <?php pintarTabla(PAR_TABLA, $st); ?>
             <div class="row">
                 <div class="text-center">
                     <a href="insertar.php" class="btn btn-info">Insertar una nueva película</a>

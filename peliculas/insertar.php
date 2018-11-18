@@ -19,10 +19,10 @@
     $valores = PAR;
 
     try {
-        tienePoderes('insertar', 'peliculas');
         $error = [];
         $pdo = conectar();
-        comprobarParametros(PAR);
+        tienePoderes('insertar', 'peliculas');
+        comprobarParametros(PAR, $_POST);
         $valores = array_map('trim', $_POST);
         $flt['titulo'] = comprobarTitulo($error);
         $flt['anyo'] = comprobarAnyo($error);

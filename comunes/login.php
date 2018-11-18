@@ -24,7 +24,7 @@
         try {
             $error = [];
             $pdo = conectar();
-            comprobarParametros(PAR_LOGIN);
+            comprobarParametros(PAR_LOGIN, $_POST);
             $valores = array_map('trim', $_POST);
             $flt['login'] = comprobarLogin($error);
             $flt['password'] = comprobarPassword($error);

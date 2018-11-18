@@ -16,15 +16,14 @@
     aceptaCookies();
     pie();
 
-    // TODO: ParamException
     try {
         tienePoderes('borrar', 'peliculas');
+        comprobarParametros(['id' => ''], $_GET);
         $id = comprobarId(INPUT_GET);
         comprobarPelicula(conectar(), $id);
-    } catch (ParamException $e) {
-        $_SESSION['error'] = 'Está usando de manera indebida el programa';
-        header('Location: index.php');
-    } catch (PermissionException $e) {
+    } catch (EmptyParamException $e) {
+        // No hago nada
+    } catch (PermissionException|ParamException|ValidationException $e) {
         header('Location: index.php');
     }
     ?>

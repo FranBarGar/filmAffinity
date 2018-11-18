@@ -17,13 +17,13 @@
     pie();
 
     try {
-        $error = [];
         tienePoderes('modificar', 'peliculas');
         $id = comprobarId(INPUT_GET);
+        $error = [];
         $pdo = conectar();
         $fila = comprobarPelicula($pdo, $id);
-        comprobarParametros(PAR);
-        $valores = array_map('trim', $_POST);
+        comprobarParametros(PAR, $_POST);
+        $fila = array_map('trim', $_POST);
         $flt['titulo'] = comprobarTitulo($error);
         $flt['anyo'] = comprobarAnyo($error);
         $flt['sinopsis'] = trim(filter_input(INPUT_POST, 'sinopsis'));
@@ -35,10 +35,7 @@
         header('Location: index.php');
     } catch (EmptyParamException|ValidationException $e) {
         // No hago nada
-    } catch (PermissionException $e) {
-        header('Location: index.php');
-    } catch (ParamException $e) {
-        $_SESSION['error'] = 'Está usando de manera indebida el programa';
+    } catch (PermissionException|ParamException $e) {
         header('Location: index.php');
     }
     ?>

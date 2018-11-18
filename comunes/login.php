@@ -15,7 +15,6 @@
         cabecera();
         aceptaCookies();
         pie();
-        mensaje();
 
         const PAR_LOGIN = ['login' => '', 'password' => ''];
 
@@ -38,17 +37,20 @@
         } catch (ParamException $e) {
             header('Location: ../index.php');
         }
+        mensaje();
         ?>
         <div class="container">
             <div class="row">
                 <form action="" method="post">
-                    <div class="form-group">
-                        <label for="login">Usuario:</label>
-                        <input class="form-control" type="text" name="login" value="">
+                    <div class="form-group <?= hasError('login', $error) ?>">
+                        <label for="login" class="control-label">Usuario:</label>
+                        <input class="form-control" type="text" name="login" value="<?= h($valores['login']) ?>">
+                        <?php mensajeError('login', $error) ?>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Contraseña:</label>
+                    <div class="form-group <?= hasError('password', $error) ?>">
+                        <label for="password" class="control-label">Contraseña:</label>
                         <input class="form-control" type="password" name="password" value="">
+                        <?php mensajeError('password', $error) ?>
                     </div>
                     <button type="submit" class="btn btn-default">Iniciar sesión</button>
                 </form>

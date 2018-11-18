@@ -288,7 +288,7 @@ function comprobarUsuario($valores, $pdo, &$error)
             return $fila;
         }
     }
-    $error['sesion'] = 'El usuario o la contraseña son incorrectos.';
+    $error['sesion'] = $_SESSION['error'] = 'El usuario o la contraseña son incorrectos.';
     return false;
 }
 

@@ -1,3 +1,6 @@
+<style media="screen">
+body { padding-bottom: 70px; }
+</style>
 <?php
 
 const PAR = [
@@ -9,6 +12,10 @@ const PAR = [
 ];
 
 class ValidationException extends Exception
+{
+}
+
+class PermissionException extends Exception
 {
 }
 
@@ -215,11 +222,11 @@ function h($cadena)
     return htmlspecialchars($cadena, ENT_QUOTES);
 }
 
-function comprobarId()
+function comprobarId($metodo)
 {
-    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    $id = filter_input($metodo, 'id', FILTER_VALIDATE_INT);
     if ($id === null || $id === false) {
-        throw new ParamException();
+        throw new ValidationException();
     }
     return $id;
 }
@@ -228,6 +235,7 @@ function comprobarPelicula($pdo, $id)
 {
     $fila = buscarPelicula($pdo, $id);
     if ($fila === false) {
+        $_SESSION['error'] = 'La pelicula no existe';
         throw new ParamException();
     }
     return $fila;
@@ -280,4 +288,87 @@ function comprobarUsuario($valores, $pdo, &$error)
     }
     $error['sesion'] = 'El usuario o la contraseña son incorrectos.';
     return false;
+}
+
+function cabecera()
+{ ?>
+  <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="../index.php">FilmAffinity</a>
+        <a class="navbar-brand" href="../peliculas/index.php">Peliculas</a>
+        <a class="navbar-brand" href="#">Generos</a>
+      </div>
+      <div class="navbar-text navbar-right">
+        <?php if (isset($_SESSION['usuario'])): ?>
+          <?= $_SESSION['usuario'] ?>
+          <a href="../comunes/logout.php" class="btn btn-success">Logout</a>
+        <?php else: ?>
+          <a href="../comunes/login.php" class="btn btn-success">Login</a>
+        <?php endif ?>
+      </div>
+    </div>
+  </nav>
+<?php
+}
+
+function aceptaCookies()
+{
+  if (!isset($_COOKIE['acepta'])){ ?>
+    <nav class="navbar navbar-fixed-bottom navbar-inverse">
+      <div class="container">
+        <div class="navbar-text navbar-right">
+          Tienes que aceptar las políticas de cookies.
+          <a href="../comunes/crear_cookie.php" class="btn btn-success">Aceptar cookies</a>
+        </div>
+      </div>
+    </nav>
+    <?php
+  }
+}
+
+function pie()
+{
+    ?>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="../index.php">FilmAffinity</a>
+            <a class="navbar-brand" href="../peliculas/index.php">Peliculas</a>
+            <a class="navbar-brand" href="#">Generos</a>
+        </div>
+    </nav>
+    <?php
+}
+
+function mensaje()
+{
+    ?>
+    <div class="container">
+        <?php
+        if (isset($_SESSION['mensaje'])) { ?>
+            <div class="row">
+                <div class="alert alert-success" role="alert">
+                    <?= $_SESSION['mensaje'] ?>
+                </div>
+            </div>
+            <?php unset($_SESSION['mensaje']);
+        } elseif (isset($_SESSION['error'])) { ?>
+            <div class="row">
+                <div class="alert alert-danger" role="alert">
+                    <?= $_SESSION['error'] ?>
+                </div>
+            </div>
+        </div>
+        <?php unset($_SESSION['error']);
+    }
+}
+
+function tienePoderes($ambito, $tabla) {
+    if (!isset($_SESSION['usuario'])) {
+        $_SESSION['error'] = "Debe iniciar sesión para poder ${ambito} ${tabla}";
+        throw new PermissionException();
+    } elseif ($_SESSION['usuario'] != 'admin') {
+        $_SESSION['error'] = "Debe ser administrador para poder ${ambito} ${tabla}";
+        throw new PermissionException();
+    }
 }

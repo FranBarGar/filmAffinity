@@ -12,6 +12,11 @@
         <?php
         require '../comunes/auxiliar.php';
 
+        cabecera();
+        aceptaCookies();
+        pie();
+        mensaje();
+
         const PAR_LOGIN = ['login' => '', 'password' => ''];
 
         $valores = PAR_LOGIN;
@@ -27,11 +32,11 @@
             comprobarErrores($error);
             // Sólo queda loguearse
             $_SESSION['usuario'] = $usuario['login'];
-            header('Location: index.php');
+            header('Location: ../index.php');
         } catch (EmptyParamException|ValidationException $e) {
             // No hago nada
         } catch (ParamException $e) {
-            header('Location: index.php');
+            header('Location: ../index.php');
         }
         ?>
         <div class="container">

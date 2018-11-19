@@ -20,6 +20,13 @@
         'Genero' => 'genero',
     ];
 
+    const OPC = [
+        'Título' => 'titulo',
+        'Año' => 'anyo',
+        'Duración' => 'duracion',
+        'Genero' => 'genero',
+    ];
+
     cabecera();
     aceptaCookies();
     pie();
@@ -45,14 +52,17 @@
                 // No hago nada
             }
             mensaje();
-            $buscarTitulo = isset($_GET['buscarTitulo'])? trim($_GET['buscarTitulo']): '';
-            $st = $pdo->prepare('SELECT p.*, genero
+            $buscar = isset($_GET['buscar'])? trim($_GET['buscar']): '';
+            $aux = isset($_GET['opc'])? trim($_GET['opc']): '';
+            $opc = OPC[array_search($aux, OPC)? array_search($aux, OPC): 'Título'];
+            $st = $pdo->prepare("SELECT p.*, genero
                                    FROM peliculas p
                                    JOIN generos g
                                      ON genero_id = g.id
-                                  WHERE position(lower(:titulo) in lower(titulo)) != 0
-                               ORDER BY id');
-            $st->execute([':titulo' => $buscarTitulo]);
+                                  WHERE position(lower(:opc) in lower($opc)) != 0
+                               ORDER BY id;");
+            $st->execute([':opc' => $buscar]);
+            echo $buscar . "-" . $aux . "-" . $opc;
             ?>
             </div>
             <div class="row" id="busqueda">
@@ -61,9 +71,19 @@
                         <legend>Buscar...</legend>
                         <form action="" method="get" class="form-inline">
                             <div class="form-group">
-                                <label for="buscarTitulo">Buscar por título:</label>
-                                <input id="buscarTitulo" type="text" name="buscarTitulo"
-                                value="<?= h($buscarTitulo) ?>"
+                                <label for="opc">
+                                    Buscar por
+                                    <select class="form-control" name="opc">
+                                    <?php foreach (OPC as $titulo => $accion): ?>
+                                        <option value="<?= $accion ?>" <?= selected($accion, $opc) ?> >
+                                            <?= $titulo ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                    :
+                                    </select>
+                                </label>
+                                <input id="buscar" type="text" name="buscar"
+                                value="<?= h($buscar) ?>"
                                 class="form-control">
                             </div>
                             <input type="submit" value="Buscar" class="btn btn-primary">

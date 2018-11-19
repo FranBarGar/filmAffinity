@@ -281,7 +281,7 @@ function comprobarUsuario($valores, $pdo, &$error)
     $st = $pdo->prepare('SELECT *
                            FROM usuarios
                           WHERE login = :login');
-    $st->execute(['login' => $login]);
+    $st->execute([':login' => $login]);
     $fila = $st->fetch();
     if ($fila !== false) {
         if (password_verify($password, $fila['password'])) {

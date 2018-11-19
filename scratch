@@ -1,0 +1,23 @@
+<label for="opc">
+    Buscar por
+    <select class="form-control" name="opc">
+    <?php foreach (OPC as $titulo => $accion): ?>
+        <option value="<?= $accion ?>">
+            <?= $titulo ?>
+        </option>
+    <?php endforeach ?>
+    :
+    </select>
+</label>
+
+const OPC = [
+    'Título' => 'titulo',
+    'Año' => 'anyo',
+    'Duración' => 'duracion',
+    'Genero' => 'genero',
+];
+
+
+$buscar = isset($_GET['buscar'])? trim($_GET['buscar']): '';
+$aux = isset($_GET['opc'])? trim($_GET['opc']): '';
+$opc = OPC[array_search($aux, OPC)? array_search($aux, OPC): 'Título'];

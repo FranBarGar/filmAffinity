@@ -297,9 +297,9 @@ function cabecera()
   <nav class="navbar navbar-inverse navbar-static-top">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="../index.php">FilmAffinity</a>
-        <a class="navbar-brand" href="../peliculas/index.php">Peliculas</a>
-        <a class="navbar-brand" href="#">Generos</a>
+        <a class="btn navbar-brand" href="../index.php">FilmAffinity</a>
+        <a class="btn navbar-brand" href="../peliculas/index.php">Peliculas</a>
+        <a class="btn navbar-brand" href="#">Generos</a>
       </div>
       <div class="navbar-text navbar-right">
         <?php if (isset($_SESSION['usuario'])): ?>

@@ -27,6 +27,11 @@
         'Genero' => 'genero',
     ];
 
+    const OPC_FIXED = [
+        'Año' => 'anyo',
+        'Duración' => 'duracion',
+    ];
+
     cabecera();
     aceptaCookies();
     pie();
@@ -35,8 +40,8 @@
     <div class="container">
         <div class="row">
             <?php
-            $pdo = conectar();
             try {
+                $pdo = conectar();
                 comprobarParametros(['id' => ''], $_POST);
                 $id = comprobarId(INPUT_POST);
                 comprobarPelicula($pdo, $id);
@@ -52,17 +57,18 @@
                 // No hago nada
             }
             mensaje();
+
             $buscar = isset($_GET['buscar'])? trim($_GET['buscar']): '';
             $aux = isset($_GET['opc'])? trim($_GET['opc']): '';
             $opc = OPC[array_search($aux, OPC)? array_search($aux, OPC): 'Título'];
+            $where = array_search($opc, OPC_FIXED)? ":opc = $opc":"position(lower(:opc) in lower($opc)) != 0";
             $st = $pdo->prepare("SELECT p.*, genero
                                    FROM peliculas p
                                    JOIN generos g
                                      ON genero_id = g.id
-                                  WHERE position(lower(:opc) in lower($opc)) != 0
+                                  WHERE $where
                                ORDER BY id;");
             $st->execute([':opc' => $buscar]);
-            echo $buscar . "-" . $aux . "-" . $opc;
             ?>
             </div>
             <div class="row" id="busqueda">

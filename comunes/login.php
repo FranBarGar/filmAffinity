@@ -12,7 +12,7 @@
         <?php
         require '../comunes/auxiliar.php';
 
-        cabecera();
+        encabezado();
         aceptaCookies();
         pie();
 

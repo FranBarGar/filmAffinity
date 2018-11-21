@@ -292,7 +292,7 @@ function comprobarUsuario($valores, $pdo, &$error)
     return false;
 }
 
-function cabecera()
+function encabezado()
 { ?>
   <nav class="navbar navbar-inverse navbar-static-top">
     <div class="container">
@@ -334,9 +334,9 @@ function pie()
     ?>
     <nav class="navbar navbar-default navbar-fixed-bottom">
         <div class="container">
-            <a class="navbar-brand" href="../index.php">FilmAffinity</a>
-            <a class="navbar-brand" href="../peliculas/index.php">Peliculas</a>
-            <a class="navbar-brand" href="#">Generos</a>
+            <p class="text-right">
+                Copyright (c) Francisco Barba García
+            </p>
         </div>
     </nav>
     <?php
